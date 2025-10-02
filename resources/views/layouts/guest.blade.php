@@ -11,9 +11,23 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-    <script src="{{ asset('js/app.js') }}" defer></script>
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                        },
+                    },
+                },
+            }
+        </script>
+
+        <!-- Livewire Styles -->
+        @livewireStyles
     </head>
     <body class="font-sans text-gray-900 antialiased">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
@@ -27,5 +41,8 @@
                 {{ $slot }}
             </div>
         </div>
+
+        <!-- Livewire Scripts -->
+        @livewireScripts
     </body>
 </html>

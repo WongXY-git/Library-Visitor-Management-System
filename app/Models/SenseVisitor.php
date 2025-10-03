@@ -15,6 +15,13 @@ class SenseVisitor extends Model
     protected $table = 'sense_visitor_master';
 
     /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<string>
@@ -27,6 +34,7 @@ class SenseVisitor extends Model
         'type',
         'active',
         'status',
+        'remarks',
     ];
 
     /**
@@ -49,6 +57,21 @@ class SenseVisitor extends Model
         'financial_hold' => 'N',
         'type' => '1',
     ];
+
+    /**
+     * Validation rules for visitor data
+     *
+     * @return array
+     */
+    public static function validationRules(): array
+    {
+        return [
+            'unique_id' => ['nullable', 'string', 'size:10'],
+            'card_no' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
+            'remarks' => ['nullable', 'string', 'max:255'],
+        ];
+    }
 
     /**
      * Get whether the visitor has a financial hold.

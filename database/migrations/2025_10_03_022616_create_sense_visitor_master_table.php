@@ -24,6 +24,7 @@ return new class extends Migration
             $table->dateTime('fr_create_ts')->nullable();
             $table->dateTime('fr_update_ts')->nullable();
             $table->string('status', 30)->nullable();
+            $table->string('remarks', 255)->nullable();
 
             // Indexes for better query performance
             $table->index('sense_id');

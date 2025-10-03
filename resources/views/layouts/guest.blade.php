@@ -19,7 +19,7 @@
                 theme: {
                     extend: {
                         fontFamily: {
-                            sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                            sans: ['Figtree', 'sans-serif'],
                         },
                     },
                 },

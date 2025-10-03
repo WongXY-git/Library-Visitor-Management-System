@@ -19,10 +19,22 @@ Route::middleware('guest')->group(function () {
     });
 });
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['ldap.auth'])
-    ->name('dashboard');
+Route::middleware(['ldap.auth'])->group(function () {
+    Route::view('dashboard', 'dashboard')->name('dashboard');
+    
+    Route::get('profile', function () {
+        return view('profile');
+    })->name('profile');
 
+    // Visitor routes
+    Route::get('visitor/create', function () {
+        return view('visitor-detail');
+    })->name('visitor.create');
+
+    Route::get('visitor/{visitor}', function (App\Models\SenseVisitor $visitor) {
+        return view('visitor-detail', ['visitor' => $visitor]);
+    })->name('visitor.detail');
+});
 
 
 require __DIR__.'/auth.php';

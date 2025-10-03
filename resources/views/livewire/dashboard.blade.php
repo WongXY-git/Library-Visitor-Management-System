@@ -7,14 +7,14 @@
                     <div class="mb-6">
                         <div class="flex space-x-4">
                             <div class="flex-1">
-                                <x-text-input 
+                                <input 
                                     wire:model.live="search"
                                     type="search"
-                                    class="w-full"
+                                    class="w-full rounded-md bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 shadow-sm"
                                     placeholder="Search by name, card number, or ID..."
                                 />
                             </div>
-                            <x-secondary-button>
+                            <x-secondary-button class="px-4 py-2">
                                 {{ __('Filter') }}
                             </x-secondary-button>
                         </div>
@@ -24,27 +24,28 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         @foreach($visitors as $visitor)
                             <x-visitor-photo-card 
-                                :name="$visitor['name']"
-                                :visitor-id="$visitor['id']"
-                                :photo-url="$visitor['photo']"
-                                editable
+                                :name="$visitor->name"
+                                :visitor-id="$visitor->id"
                             />
                         @endforeach
                     </div>
 
-                    <!-- Pagination Placeholder -->
-                    <div class="mt-6">
-                        <nav class="flex justify-between items-center">
-                            <button class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 disabled:opacity-50">
-                                Previous
-                            </button>
-                            <span class="text-sm text-gray-600 dark:text-gray-400">
-                                Page 1 of 1
-                            </span>
-                            <button class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 disabled:opacity-50">
-                                Next
-                            </button>
-                        </nav>
+                    <!-- Pagination -->
+                    <div class="mt-6 flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+                        @if($visitors->onFirstPage())
+                            <span class="text-gray-400 dark:text-gray-600">Previous</span>
+                        @else
+                            <button wire:click="previousPage" class="hover:text-gray-700 dark:hover:text-gray-300">Previous</button>
+                        @endif
+
+                        <span>Page {{ $visitors->currentPage() }} of {{ $visitors->lastPage() }}</span>
+
+                        @if($visitors->hasMorePages())
+                            <button wire:click="nextPage" class="hover:text-gray-700 dark:hover:text-gray-300">Next</button>
+                        @else
+                            <span class="text-gray-400 dark:text-gray-600">Next</span>
+                        @endif
+                    </div>
                     </div>
                 </div>
             </div>

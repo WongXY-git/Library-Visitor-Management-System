@@ -13,25 +13,23 @@ return new class extends Migration
     {
         Schema::create('sense_visitor_master', function (Blueprint $table) {
             $table->id();
-            $table->integer('sense_id');
-            $table->string('unique_id', 255)->nullable();
-            $table->string('card_no', 255);
-            $table->string('name', 255);
-            $table->enum('financial_hold', ['Y', 'N'])->default('N');
-            $table->string('type', 20)->default('1');
-            $table->enum('active', ['Y', 'N'])->default('Y');
-            $table->dateTime('updated_ts')->nullable();
-            $table->dateTime('fr_create_ts')->nullable();
-            $table->dateTime('fr_update_ts')->nullable();
+            $table->string('sense_id')->nullable();
+            $table->string('unique_id', 10)->nullable();
+            $table->string('card_no');
+            $table->string('name');
+            $table->string('photo_path')->nullable();
+            $table->char('active', 1)->default('Y');
             $table->string('status', 30)->nullable();
-            $table->string('remarks', 255)->nullable();
+            $table->text('remarks')->nullable();
+            $table->timestamp('updated_ts')->nullable();
+            $table->timestamp('fr_create_ts')->nullable();
+            $table->timestamp('fr_update_ts')->nullable();
 
             // Indexes for better query performance
             $table->index('sense_id');
             $table->index('unique_id');
             $table->index('card_no');
             $table->index('name');
-            $table->index('type');
             $table->index('status');
         });
     }

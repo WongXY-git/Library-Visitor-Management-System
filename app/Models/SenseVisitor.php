@@ -5,6 +5,34 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
+/**
+ * Class SenseVisitor
+ * 
+ * @package App\Models
+ * 
+ * This model represents a visitor in the library management system.
+ * It handles all visitor-related data and provides methods for validation
+ * and data formatting.
+ * 
+ * Key Features:
+ * - Visitor identification through unique ID and card number
+ * - Photo management
+ * - Remarks tracking
+ * - Name formatting
+ * - Activity status tracking
+ * 
+ * @property string $sense_id System-generated identifier
+ * @property string $unique_id 10-digit unique identifier
+ * @property string $card_no Library card number
+ * @property string $name Visitor's full name
+ * @property string $active Activity status (Y/N)
+ * @property string $status Current status
+ * @property string|null $remarks Additional notes about the visitor
+ * @property string|null $photo_path Path to visitor's photo in storage
+ * @property \Carbon\Carbon $updated_ts Last update timestamp
+ * @property \Carbon\Carbon $fr_create_ts Face recognition creation timestamp
+ * @property \Carbon\Carbon $fr_update_ts Face recognition update timestamp
+ */
 class SenseVisitor extends Model
 {
     /**
@@ -24,8 +52,6 @@ class SenseVisitor extends Model
     /**
      * Constants for visitor identification
      */
-    public const VISITOR_TYPE = '1';
-    public const VISITOR_FINANCIAL_HOLD = 'N';
     public const VISITOR_ID_LENGTH = 10;
 
     /**
@@ -38,11 +64,9 @@ class SenseVisitor extends Model
         'unique_id',
         'card_no',
         'name',
-        'type',
         'active',
         'status',
-        'remarks',
-        'financial_hold', // Included for explicit storage even though it's constant
+        'remarks'
     ];
 
     /**
@@ -57,40 +81,28 @@ class SenseVisitor extends Model
     ];
 
     /**
-     * The model's default values for attributes.
-     * These are visitor-specific constants that are always stored
-     * to maintain data consistency and aid in identification.
-     *
-     * @var array
-     */
-    protected $attributes = [
-        'financial_hold' => self::VISITOR_FINANCIAL_HOLD,
-        'type' => self::VISITOR_TYPE,
-    ];
-
-    /**
      * Boot the model.
      */
     protected static function boot()
     {
         parent::boot();
-
-        // Always ensure visitor-specific constants are set
-        static::creating(function ($visitor) {
-            $visitor->financial_hold = self::VISITOR_FINANCIAL_HOLD;
-            $visitor->type = self::VISITOR_TYPE;
-        });
-
-        static::updating(function ($visitor) {
-            $visitor->financial_hold = self::VISITOR_FINANCIAL_HOLD;
-            $visitor->type = self::VISITOR_TYPE;
-        });
     }
 
     /**
      * Validation rules for visitor data
      *
      * @return array
+     */
+    /**
+     * Get validation rules for visitor data
+     * 
+     * Defines the validation rules for visitor data fields:
+     * - unique_id: Must be exactly 10 digits if provided
+     * - card_no: Required, string with maximum 255 characters
+     * - name: Required, string with maximum 255 characters
+     * - remarks: Optional, string with maximum 255 characters
+     * 
+     * @return array Array of Laravel validation rules
      */
     public static function validationRules(): array
     {
@@ -109,11 +121,19 @@ class SenseVisitor extends Model
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
+    /**
+     * Scope query to only include records with valid visitor identifiers
+     * 
+     * This scope filters records to ensure they have properly formatted unique IDs:
+     * - Must be exactly VISITOR_ID_LENGTH digits
+     * - Must contain only numbers
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
     public function scopeVisitorIdentifiers($query)
     {
-        return $query->where('type', self::VISITOR_TYPE)
-                    ->where('financial_hold', self::VISITOR_FINANCIAL_HOLD)
-                    ->whereRaw('LENGTH(unique_id) = ?', [self::VISITOR_ID_LENGTH])
+        return $query->whereRaw('LENGTH(unique_id) = ?', [self::VISITOR_ID_LENGTH])
                     ->whereRaw('unique_id REGEXP ?', ['^[0-9]{' . self::VISITOR_ID_LENGTH . '}$']);
     }
 
@@ -122,11 +142,19 @@ class SenseVisitor extends Model
      *
      * @return bool
      */
+    /**
+     * Check if a record has a valid visitor ID format
+     * 
+     * Validates that the visitor record has:
+     * - A non-null unique_id
+     * - A unique_id of exactly VISITOR_ID_LENGTH digits
+     * - A unique_id containing only numbers
+     * 
+     * @return bool True if the visitor ID format is valid
+     */
     public function isValidVisitorRecord(): bool
     {
-        return $this->type === self::VISITOR_TYPE &&
-               $this->financial_hold === self::VISITOR_FINANCIAL_HOLD &&
-               $this->unique_id !== null &&
+        return $this->unique_id !== null &&
                strlen($this->unique_id) === self::VISITOR_ID_LENGTH &&
                preg_match('/^[0-9]{' . self::VISITOR_ID_LENGTH . '}$/', $this->unique_id);
     }
@@ -142,15 +170,10 @@ class SenseVisitor extends Model
     }
 
     /**
-     * Get whether the visitor has a financial hold.
-     */
-    public function isOnFinancialHold(): bool
-    {
-        return $this->financial_hold === 'Y';
-    }
-
-    /**
      * Get whether the visitor is active.
+     * 
+     * Checks if the visitor's account is currently active in the system.
+     * Active visitors have full access to library services.
      */
     public function isActive(): bool
     {

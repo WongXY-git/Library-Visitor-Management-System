@@ -23,9 +23,6 @@ Route::view('dashboard', 'dashboard')
     ->middleware(['ldap.auth'])
     ->name('dashboard');
 
-Route::middleware(['ldap.auth'])->group(function () {
-    Route::view('visitors', 'livewire.pages.visitors.index')
-        ->name('visitors.index');
-});
+
 
 require __DIR__.'/auth.php';

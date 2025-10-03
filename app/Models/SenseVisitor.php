@@ -24,13 +24,9 @@ class SenseVisitor extends Model
         'unique_id',
         'card_no',
         'name',
-        'financial_hold',
         'type',
         'active',
-        'created_by',
-        'updated_by',
         'status',
-        'remarks',
     ];
 
     /**
@@ -39,11 +35,19 @@ class SenseVisitor extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'created_ts' => 'datetime',
         'updated_ts' => 'datetime',
-        'last_update_ts' => 'datetime',
-        'f_update_ts' => 'datetime',
+        'fr_create_ts' => 'datetime',
         'fr_update_ts' => 'datetime',
+    ];
+
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'financial_hold' => 'N',
+        'type' => '1',
     ];
 
     /**

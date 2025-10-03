@@ -31,4 +31,9 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'senselink' => [
+        'url' => env('SENSELINK_API_URL'),
+        'token' => env('SENSELINK_API_TOKEN'),
+    ],
+
 ];
